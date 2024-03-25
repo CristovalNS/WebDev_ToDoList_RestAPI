@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { auth } from "../../PasswordLoginFirebase/firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'; // Added createUserWithEmailAndPassword
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import styles from './auth.module.css';
 
 const LogIn = ({ onLoginSuccess }) => {
     
-    const [loginEmail, setLoginEmail] = useState('');
-    const [loginPassword, setLoginPassword] = useState('');
-
-    const [registerEmail, setRegisterEmail] = useState('');
-    const [registerPassword, setRegisterPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const logIn = (e) => {
         e.preventDefault();
-        signInWithEmailAndPassword(auth, loginEmail, loginPassword) 
+        signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 console.log(userCredential);
                 onLoginSuccess(); 
@@ -35,10 +32,9 @@ const LogIn = ({ onLoginSuccess }) => {
 
     const register = (e) => {
         e.preventDefault();
-        createUserWithEmailAndPassword(auth, registerEmail, registerPassword) 
+        createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             console.log(userCredential);
-            onLoginSuccess(); 
         }).catch((error) => {
             console.log(error);
         })
@@ -51,15 +47,15 @@ const LogIn = ({ onLoginSuccess }) => {
                 <input
                     type="email"
                     placeholder='Enter your email'
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className={styles['input']}
                 />
                 <input
                     type="password"
                     placeholder='Enter your password'
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className={styles['input']}
                 />
                 <button type="submit" className={styles['button']}> 
@@ -76,21 +72,23 @@ const LogIn = ({ onLoginSuccess }) => {
                 <input 
                     type="email" 
                     placeholder='Enter your email'
-                    value={registerEmail} 
-                    onChange={(e) => setRegisterEmail(e.target.value)}
-                    className={styles.input}
+                    className={styles.input} 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
                 />
                 <input 
                     type="password" 
                     placeholder='Enter your password'
-                    value={registerPassword}
-                    onChange={(e) => setRegisterPassword(e.target.value)}
-                    className={styles.input}
+                    className={styles.input} 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
                 <button type="submit" className={styles.button}> Register </button>
             </form>
         </div>
     );
+    
+
 };
 
 export default LogIn;
