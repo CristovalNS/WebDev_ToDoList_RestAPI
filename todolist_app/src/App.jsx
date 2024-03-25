@@ -1,75 +1,80 @@
 import { useEffect, useState } from "react";
-import LogIn from './components/auth/login'
+import { db, auth } from "./PasswordLoginFirebase/firebase.js"; 
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import LogIn from './components/auth/login';
 import Register from "./components/auth/register";
 import AuthDetails from "./components/auth/authdetails";
 import { Header } from "./components/header";
 import { Tasks } from "./components/tasks";
 
-const LOCAL_STORAGE_KEY = 'todo:tasks';
-
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [tasks, setTasks] = useState([]);
-  
 
-  function loadSavedTasks() {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if(saved) {
-      setTasks(JSON.parse(saved));
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      if (user) {
+        setIsAuthenticated(true);
+        setUserEmail(user.email);
+        loadTasks(); // Load tasks when user is authenticated
+      } else {
+        setIsAuthenticated(false);
+        setUserEmail('');
+        setTasks([]); // Clear tasks when user is not authenticated
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  async function loadTasks() {
+    const user = auth.currentUser;
+    if (user) {
+      const tasksQuery = query(collection(db, "tasks"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(tasksQuery);
+      const loadedTasks = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setTasks(loadedTasks);
     }
   }
 
-  function setTasksAndSave(newTasks) {
-    setTasks(newTasks);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newTasks));
+  async function addTask(taskTitle) {
+    const user = auth.currentUser;
+    if (user) {
+      await addDoc(collection(db, "tasks"), {
+        title: taskTitle,
+        isCompleted: false,
+        userId: user.uid
+      });
+      loadTasks(); 
+    }
   }
 
-  useEffect(() => {
-    loadSavedTasks();
-  }, [])
-
-  function addTask(taskTitle) {
-    setTasksAndSave([...tasks, {
-      id: crypto.randomUUID(),
-      title: taskTitle,
-      isCompleted: false
-    }]);
+  async function deleteTaskById(taskId) {
+    await deleteDoc(doc(db, "tasks", taskId));
+    loadTasks(); 
   }
 
-  function deleteTaskById(taskId) {
-    const newTasks = tasks.filter(task => task.id !== taskId);
-    setTasksAndSave(newTasks);
-  }
-
-  function toggleTaskCompletedById(taskId) {
-    const newTasks = tasks.map(task => {
-      if(task.id === taskId) {
-        return {
-          ...task,
-          isCompleted: !task.isCompleted
-        }
-      }
-      return task;
-    });
-    setTasksAndSave(newTasks);
-  }
-
-  function handleLoginSuccess(email) {
-    setIsAuthenticated(true);
-    setUserEmail(email); 
-  }
-
-  function handleLogout() {
-    setIsAuthenticated(false);
-    setUserEmail(''); 
+  async function toggleTaskCompletedById(taskId) {
+    const taskRef = doc(db, "tasks", taskId);
+    const task = tasks.find(task => task.id === taskId);
+    if (task) {
+      await updateDoc(taskRef, {
+        isCompleted: !task.isCompleted
+      });
+      loadTasks(); 
+    }
   }
 
   return (
     <>
       {!isAuthenticated ? (
         <>
-          <LogIn onLoginSuccess={handleLoginSuccess} />
+          <LogIn />
           <Register />
           <AuthDetails />
         </>
@@ -78,7 +83,7 @@ function App() {
           <Header 
             handleAddTask={addTask} 
             userEmail={userEmail} 
-            handleLogout={handleLogout} />
+            handleLogout={() => signOut(auth)} />
           <Tasks
             tasks={tasks}
             onDelete={deleteTaskById}
