@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
+import LogIn from './components/auth/login'
+import Register from "./components/auth/register";
+import AuthDetails from "./components/auth/authdetails";
 import { Header } from "./components/header";
 import { Tasks } from "./components/tasks";
 
 const LOCAL_STORAGE_KEY = 'todo:tasks';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
   const [tasks, setTasks] = useState([]);
+  
 
   function loadSavedTasks() {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -49,18 +55,39 @@ function App() {
     setTasksAndSave(newTasks);
   }
 
+  function handleLoginSuccess(email) {
+    setIsAuthenticated(true);
+    setUserEmail(email); 
+  }
+
+  function handleLogout() {
+    setIsAuthenticated(false);
+    setUserEmail(''); 
+  }
+
   return (
     <>
-      <Header handleAddTask={addTask} />
-      <Tasks
-        tasks={tasks}
-        onDelete={deleteTaskById}
-        onComplete={toggleTaskCompletedById}
-      />
+      {!isAuthenticated ? (
+        <>
+          <LogIn onLoginSuccess={handleLoginSuccess} />
+          <Register />
+          <AuthDetails />
+        </>
+      ) : (
+        <>
+          <Header 
+            handleAddTask={addTask} 
+            userEmail={userEmail} 
+            handleLogout={handleLogout} />
+          <Tasks
+            tasks={tasks}
+            onDelete={deleteTaskById}
+            onComplete={toggleTaskCompletedById}
+          />
+        </>
+      )}
     </>
-
-    // <p> Heya! </p>
   )
 }
 
-export default App
+export default App;
