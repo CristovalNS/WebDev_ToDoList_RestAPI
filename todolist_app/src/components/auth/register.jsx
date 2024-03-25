@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { auth } from "../../PasswordLoginFirebase/firebase";
+import React, {useState} from 'react'
+import {auth} from "../../PasswordLoginFirebase/firebase"
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import styles from './auth.module.css';
 
 const Register = () => {
     const [email, setEmail] = useState('');
@@ -10,33 +9,32 @@ const Register = () => {
     const register = (e) => {
         e.preventDefault();
         createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            console.log(userCredential);
+        .then((useCredential) => {
+            console.log(useCredential);
         }).catch((error) => {
             console.log(error);
         })
     }
 
     return (
-        <div className={styles.loginContainer}>
-            <form onSubmit={register} className={styles.form}>
+        <div className = 'login-container'>
+            <form onSubmit={register}>
                 <h1> Create an Account </h1>
                 <input 
                     type="email" 
-                    placeholder='Enter your email'
-                    className={styles.input} 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                    placeholder='Enter your email' 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)}>
+                </input>
                 <input 
                     type="password" 
-                    placeholder='Enter your password'
-                    className={styles.input} 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit" className={styles.button}> Register </button>
+                    placeholder='Enter your password' 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}>
+                </input>
+                <button type="submit"> Register </button>
             </form>
+
         </div>
     )
 }

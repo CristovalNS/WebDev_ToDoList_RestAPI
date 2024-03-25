@@ -75,8 +75,8 @@ function App() {
       {!isAuthenticated ? (
         <>
           <LogIn />
-          {/* <Register /> */}
-          {/* <AuthDetails /> // Used for debugging*/} 
+          <Register />
+          <AuthDetails />
         </>
       ) : (
         <>
