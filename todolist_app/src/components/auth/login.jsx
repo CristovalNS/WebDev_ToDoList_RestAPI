@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { auth } from "../../PasswordLoginFirebase/firebase";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import styles from './auth.module.css';
 
 const LogIn = ({ onLoginSuccess }) => {
+    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -28,8 +30,18 @@ const LogIn = ({ onLoginSuccess }) => {
             });
     };
 
+    const register = (e) => {
+        e.preventDefault();
+        createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            console.log(userCredential);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
     return (
-        <div className='login-container'>
+        <div className={styles['login-container']}>
             <form onSubmit={logIn}>
                 <h1>Log In to your Account</h1>
                 <input
@@ -37,18 +49,46 @@ const LogIn = ({ onLoginSuccess }) => {
                     placeholder='Enter your email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                ></input>
+                    className={styles['input']}
+                />
                 <input
                     type="password"
                     placeholder='Enter your password'
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                ></input>
-                <button type="submit">Log In</button>
+                    className={styles['input']}
+                />
+                <button type="submit" className={styles['button']}> 
+                    Log In
+                </button>
+
+                <button onClick={signInWithGoogle} className={styles['button']}> 
+                    Log In with Google
+                </button>
             </form>
-            <button onClick={signInWithGoogle}>Log In with Google</button>
+
+            <form onSubmit={register} className={styles.form}>
+                <h1> Create an Account </h1>
+                <input 
+                    type="email" 
+                    placeholder='Enter your email'
+                    className={styles.input} 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <input 
+                    type="password" 
+                    placeholder='Enter your password'
+                    className={styles.input} 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <button type="submit" className={styles.button}> Register </button>
+            </form>
         </div>
     );
+    
+
 };
 
 export default LogIn;
