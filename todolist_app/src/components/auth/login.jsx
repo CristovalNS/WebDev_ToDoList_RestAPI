@@ -66,7 +66,7 @@ const LogIn = ({ onLoginSuccess }) => {
                     Log In
                 </button>
 
-                <button onClick={signInWithGoogle} className={styles['button']}> 
+                <button type="button" onClick={signInWithGoogle} className={styles['button']}> 
                     Log In with Google
                 </button>
             </form>
