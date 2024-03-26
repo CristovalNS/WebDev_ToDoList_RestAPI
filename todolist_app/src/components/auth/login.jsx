@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { auth } from "../../PasswordLoginFirebase/firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'; 
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth'; 
 import styles from './auth.module.css';
 
 const LogIn = ({ onLoginSuccess }) => {
@@ -24,7 +24,7 @@ const LogIn = ({ onLoginSuccess }) => {
 
     const signInWithGoogle = () => {
         const provider = new GoogleAuthProvider();
-        signInWithPopup(auth, provider)
+        signInWithRedirect(auth, provider)
             .then((result) => {
                 console.log(result);
                 onLoginSuccess();
