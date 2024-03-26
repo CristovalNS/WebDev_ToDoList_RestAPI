@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { auth } from "../../PasswordLoginFirebase/firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth'; 
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect } from 'firebase/auth'; 
 import styles from './auth.module.css';
 
 const LogIn = ({ onLoginSuccess }) => {
@@ -16,9 +16,15 @@ const LogIn = ({ onLoginSuccess }) => {
         signInWithEmailAndPassword(auth, loginEmail, loginPassword) 
             .then((userCredential) => {
                 console.log(userCredential);
-                onLoginSuccess(); 
+                if (typeof onLoginSuccess === 'function') {
+                    onLoginSuccess();
+                } else {
+                    console.warn('onLoginSuccess is not defined.');
+                }
+                window.alert("Login successful!"); 
             }).catch((error) => {
-                console.log(error);
+                console.error(error);
+                window.alert("Login failed: " + error.message); 
             });
     };
 
@@ -28,8 +34,10 @@ const LogIn = ({ onLoginSuccess }) => {
             .then((result) => {
                 console.log(result);
                 onLoginSuccess();
+                window.alert("Google login successful!"); 
             }).catch((error) => {
-                console.log(error);
+                console.error(error);
+                window.alert("Google login failed: " + error.message); 
             });
     };
 
@@ -39,8 +47,10 @@ const LogIn = ({ onLoginSuccess }) => {
         .then((userCredential) => {
             console.log(userCredential);
             onLoginSuccess(); 
+            window.alert("Registration successful!"); 
         }).catch((error) => {
-            console.log(error);
+            console.error(error);
+            window.alert("Registration failed: " + error.message); 
         })
     }
 
