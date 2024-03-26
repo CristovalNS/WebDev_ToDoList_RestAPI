@@ -46,7 +46,11 @@ const LogIn = ({ onLoginSuccess }) => {
         createUserWithEmailAndPassword(auth, registerEmail, registerPassword) 
         .then((userCredential) => {
             console.log(userCredential);
-            onLoginSuccess(); 
+            if (typeof onLoginSuccess === 'function') {
+                onLoginSuccess();
+            } else {
+                console.warn('onLoginSuccess is not defined.');
+            } 
             window.alert("Registration successful!"); 
         }).catch((error) => {
             console.error(error);
