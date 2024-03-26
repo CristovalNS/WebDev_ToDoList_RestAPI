@@ -62,7 +62,6 @@
     color: white;
     margin-right: 10px;
     cursor: pointer;
-    /* other styles as needed */
   }
   
   .logoutButton {
@@ -70,5 +69,4 @@
     border: none;
     color: white;
     cursor: pointer;
-    /* other styles as needed */
   }
