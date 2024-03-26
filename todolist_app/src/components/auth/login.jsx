@@ -33,7 +33,11 @@ const LogIn = ({ onLoginSuccess }) => {
         signInWithRedirect(auth, provider)
             .then((result) => {
                 console.log(result);
-                onLoginSuccess();
+                if (typeof onLoginSuccess === 'function') {
+                    onLoginSuccess();
+                } else {
+                    console.warn('onLoginSuccess is not defined.');
+                } 
                 window.alert("Google login successful!"); 
             }).catch((error) => {
                 console.error(error);
