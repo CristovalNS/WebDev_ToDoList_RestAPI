@@ -3,7 +3,7 @@
 ## Overview
 This To-Do API is built using FastAPI and interacts with a Firestore database to manage to-do tasks. It supports operations for creating, retrieving, updating, and deleting tasks.
 
-File containing the API is called 'main2.py', located in todolist_app/src/api/main2.py.
+File containing the API is called ['main2.py'](https://github.com/CristovalNS/WebDev_ToDoList_RestAPI/blob/main/todolist_app/src/api/main2.py), located in todolist_app/src/api/main2.py. Click on the hyperlink to directly go to the file.
 
 After setting up the necessary Python libraries, use localhost:8000/docs to open the doc page.
 
